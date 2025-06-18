@@ -53,12 +53,6 @@ app.get("/books/:id/reviews", async (req, res) => {
       createdAt: -1,
     }); // Sort by newest first
 
-    if (!reviews.length) {
-      return res
-        .status(404)
-        .json({ message: "No reviews found for this book" });
-    }
-
     res.status(200).json(reviews);
   } catch (error) {
     res.status(500).json({ error: error.message });

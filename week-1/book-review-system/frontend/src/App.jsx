@@ -45,7 +45,10 @@ function App() {
               </td>
               <td>{book.author}</td>
               <td>{book.genre}</td>
-              <td>{book.publishedYeaer}</td>
+              <td>{book.publishedYear}</td>
+              <td>
+                <a href="#">Add to favorites</a>
+              </td>
             </tr>
           ))}
         </tbody>

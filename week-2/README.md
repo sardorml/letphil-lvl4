@@ -1,4 +1,4 @@
-# Week 1.
+# Week 2.
 
 Create a book review system
 
@@ -11,6 +11,10 @@ GET /books – List all books
 GET /books/:id – View book with all its reviews (use .populate())
 
 POST /reviews – Add a review for a book
+
+POST /auth/register - Create user
+
+POST /auth/login - Login user
 
 Pre reqs:
 
@@ -28,17 +32,12 @@ https://www.mongodb.com/cloud/atlas/register
 
 ## Homework
 
-To finish books/:id
+To protect fronend routes
 
-- Display book details
-- Display reviews for that book id
-- Add input to add new reviews for that book
+- /add-book - only access if token is in local storage
 
-Create a User model
+backend:
 
-- Store name, email, interests['genres'], books: ['bookIds']
-- POST /register
-- POST /login
-- create Favorites model
-
-add a functionality to add books as favorites and store it in the database.
+- orginize routes
+- separate books and authentication routes
+- implement password hashing (bycrypt or any other library)

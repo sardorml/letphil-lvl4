@@ -35,9 +35,13 @@ https://www.mongodb.com/cloud/atlas/register
 To protect fronend routes
 
 - /add-book - only access if token is in local storage
+- add interests field during user registration
+- add profile page
+- add ability to add books as favorite
 
 backend:
 
 - orginize routes
 - separate books and authentication routes
 - implement password hashing (bycrypt or any other library)
+- implement favorite funcionality

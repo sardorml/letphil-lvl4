@@ -1,6 +1,33 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useEffect, useState } from "react";
+
+export function VoteList({ poll }: { poll: Poll }) {
+  return (
+    <ul className="space-y-4">
+      {poll.options.map((option, index) => {
+        // Calculate total votes for this poll
+        const totalVotes = poll.options.reduce((sum, opt) => sum + opt.vote, 0);
+        // Calculate percentage (avoid division by zero)
+        const percentage =
+          totalVotes === 0 ? 0 : (option.vote / totalVotes) * 100;
+
+        return (
+          <li key={index}>
+            <span className="flex justify-between">
+              <span>{option.text}</span>
+              <span className="text-blue-700">{option.vote}</span>
+            </span>
+
+            <Progress value={percentage} className="h-3" />
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
 
 export type Poll = {
   createdAt: Date;
@@ -14,7 +41,7 @@ export type Poll = {
 };
 
 function PollsPage() {
-  const [polls, setPolls] = useState<Poll[]>([]);
+  const [polls, setPolls] = useState<Poll[]>();
 
   async function fetchPolls() {
     try {
@@ -31,6 +58,12 @@ function PollsPage() {
     fetchPolls();
   }, []);
 
+  if (!polls) {
+    return (
+      <div className="flex justify-center items-center mt-10">Loading...</div>
+    );
+  }
+
   return (
     <div className="flex justify-center">
       <div className="flex flex-col w-full items-center gap-4 pt-4">
@@ -40,29 +73,7 @@ function PollsPage() {
               <CardTitle>{poll.question}</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-4">
-                {poll.options.map((option, index) => {
-                  // Calculate total votes for this poll
-                  const totalVotes = poll.options.reduce(
-                    (sum, opt) => sum + opt.vote,
-                    0
-                  );
-                  // Calculate percentage (avoid division by zero)
-                  const percentage =
-                    totalVotes === 0 ? 0 : (option.vote / totalVotes) * 100;
-
-                  return (
-                    <li key={index}>
-                      <span className="flex justify-between">
-                        <span>{option.text}</span>
-                        <span className="text-blue-700">{option.vote}</span>
-                      </span>
-
-                      <Progress value={percentage} className="h-3" />
-                    </li>
-                  );
-                })}
-              </ul>
+              <VoteList poll={poll} />
             </CardContent>
           </Card>
         ))}

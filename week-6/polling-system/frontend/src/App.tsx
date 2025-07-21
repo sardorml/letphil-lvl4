@@ -11,6 +11,7 @@ import {
 import { Label } from "./components/ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
+import { RadioGroup, RadioGroupItem } from "./components/ui/radio-group";
 
 export type Option = {
   label: string;
@@ -31,6 +32,16 @@ function CreatePollCard({
   deleteOption,
   addToOptions,
 }: PollCardProps) {
+  const pollPrivacy = [
+    {
+      id: "private",
+      text: "Private",
+    },
+    {
+      id: "public",
+      text: "Public",
+    },
+  ];
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
@@ -38,7 +49,24 @@ function CreatePollCard({
         <CardDescription>Enter poll details</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={createPoll}>
+        <RadioGroup className="flex bg-muted p-1 rounded-lg">
+          {pollPrivacy.map((option) => (
+            <div key={option.id} className="flex-1">
+              <RadioGroupItem
+                value={option.id}
+                id={option.id}
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor={option.id}
+                className="flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all hover:bg-background hover:text-foreground peer-data-[state=checked]:bg-background peer-data-[state=checked]:text-foreground cursor-pointer"
+              >
+                {option.text}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+        <form onSubmit={createPoll} className="pt-6">
           <div className="flex flex-col gap-6">
             <div className="grid gap-2">
               <Label htmlFor="question">Qestion</Label>

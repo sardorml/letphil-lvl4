@@ -12,6 +12,7 @@ import { Label } from "./components/ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "./components/ui/radio-group";
+import { useNavigate } from "react-router";
 
 export type Option = {
   label: string;
@@ -42,6 +43,11 @@ function CreatePollCard({
       text: "Public",
     },
   ];
+
+  const userId = localStorage.getItem("userId");
+  const navigate = useNavigate();
+  const [selectedPrivacy, setSelectedPrivacy] = useState<string>("public");
+
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
@@ -49,7 +55,15 @@ function CreatePollCard({
         <CardDescription>Enter poll details</CardDescription>
       </CardHeader>
       <CardContent>
-        <RadioGroup className="flex bg-muted p-1 rounded-lg">
+        <RadioGroup
+          defaultValue="public"
+          onValueChange={(value) => {
+            console.log(value);
+            if (value == "private" && !userId) navigate("/login");
+            else setSelectedPrivacy(value);
+          }}
+          className="flex bg-muted p-1 rounded-lg"
+        >
           {pollPrivacy.map((option) => (
             <div key={option.id} className="flex-1">
               <RadioGroupItem

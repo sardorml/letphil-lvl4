@@ -8,6 +8,8 @@ import PollsPage from "./pages/PollsPage.tsx";
 import PollPage from "./pages/PollPage.tsx";
 import { Navigation } from "./components/Navigation.tsx";
 import { Toaster } from "@/components/ui/sonner";
+import { LoginForm } from "./pages/LoginPage.tsx";
+import { RegisterForm } from "./pages/RegisterPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -15,9 +17,10 @@ createRoot(document.getElementById("root")!).render(
       <Navigation />
       <Routes>
         <Route path="/" element={<App />}></Route>
-        <Route path="/login" element={<EmailPasswordAuth />}></Route>
         <Route path="/polls" element={<PollsPage />} />
         <Route path="/poll/:id" element={<PollPage />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/register" element={<RegisterForm />} />
       </Routes>
       <Toaster />
     </BrowserRouter>

@@ -3,13 +3,14 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter, Route, Routes } from "react-router";
-import { EmailPasswordAuth } from "./components/AuthForm.tsx";
 import PollsPage from "./pages/PollsPage.tsx";
 import PollPage from "./pages/PollPage.tsx";
 import { Navigation } from "./components/Navigation.tsx";
 import { Toaster } from "@/components/ui/sonner";
 import { LoginForm } from "./pages/LoginPage.tsx";
 import { RegisterForm } from "./pages/RegisterPage.tsx";
+import NotFound from "./pages/NotFound.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -21,6 +22,8 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/poll/:id" element={<PollPage />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
     </BrowserRouter>

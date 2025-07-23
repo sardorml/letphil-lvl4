@@ -23,15 +23,19 @@ export type Option = {
 type PollCardProps = {
   createPoll: (event: React.FormEvent<HTMLFormElement>) => void;
   options: Option[];
+  userId: string;
   deleteOption: (index: number) => void;
   addToOptions: () => void;
+  onSelectPrivacy: (value: string) => void;
 };
 
 function CreatePollCard({
   createPoll,
   options,
+  userId,
   deleteOption,
   addToOptions,
+  onSelectPrivacy,
 }: PollCardProps) {
   const pollPrivacy = [
     {
@@ -44,9 +48,7 @@ function CreatePollCard({
     },
   ];
 
-  const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
-  const [selectedPrivacy, setSelectedPrivacy] = useState<string>("public");
 
   return (
     <Card className="w-full max-w-sm">
@@ -60,7 +62,7 @@ function CreatePollCard({
           onValueChange={(value) => {
             console.log(value);
             if (value == "private" && !userId) navigate("/login");
-            else setSelectedPrivacy(value);
+            else onSelectPrivacy(value);
           }}
           className="flex bg-muted p-1 rounded-lg"
         >
@@ -133,7 +135,14 @@ function App() {
       htmlFor: "option-1",
       id: "option-1",
     },
+    {
+      label: "Option 2",
+      htmlFor: "option-2",
+      id: "option-2",
+    },
   ]);
+  const [selectedPrivacy, setSelectedPrivacy] = useState<string>("public");
+  const userId = localStorage.getItem("userId");
 
   function addToOptions() {
     setOptions((prev) => [
@@ -183,8 +192,12 @@ function App() {
     const pollData = {
       question: questionInput.value,
       activeDays: 1,
+      privacy: selectedPrivacy,
       options: optionsInputs,
+      userId,
     };
+
+    console.log("pollData", pollData);
 
     try {
       const response = await fetch("http://localhost:3005/poll/create", {
@@ -194,7 +207,6 @@ function App() {
         },
         body: JSON.stringify(pollData),
       });
-
       const data = await response.json();
       const pollLink = `http://localhost:5173/poll/${data.id}`;
       toast.success("Poll created successfully!", {
@@ -221,6 +233,8 @@ function App() {
           deleteOption={deleteOption}
           addToOptions={addToOptions}
           createPoll={createPoll}
+          onSelectPrivacy={setSelectedPrivacy}
+          userId={userId}
         />
       </div>
     </div>

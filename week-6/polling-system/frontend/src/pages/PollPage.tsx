@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { VoteList, type Poll } from "./PollsPage";
+import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import {
   Card,
@@ -12,20 +11,28 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { VoteList, type Poll } from "@/components/PollsList";
 
 function PollPage() {
   const { id } = useParams();
   const [poll, setPoll] = useState<Poll>();
   const [selectedOption, setSelectedOption] = useState<string>("0");
   const [hasVoted, setHasVoted] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const userId = localStorage.getItem("userId");
 
   async function fetchPoll() {
     try {
       const response = await fetch(`http://localhost:3005/poll/${id}`);
+      console.log(response.status);
+
+      if (response.status === 404) navigate("/not-found");
       const data = await response.json();
 
       setPoll(data);
     } catch (error) {
+      console.log(error);
       toast.error("Something went wrong");
     }
   }
@@ -35,6 +42,11 @@ function PollPage() {
 
     if (!id) {
       toast.error("Poll does not exist");
+      return;
+    }
+
+    if (!userId && poll?.privacy === "private") {
+      navigate("/login");
       return;
     }
 
@@ -75,7 +87,10 @@ function PollPage() {
     <div className="flex justify-center h-[100vh] items-center">
       <Card key={poll.id} className="w-1/3 pt-6">
         <CardHeader>
-          <CardTitle>{poll.question}</CardTitle>
+          <CardTitle className="flex justify-between">
+            <span>{poll.question} </span>
+            <Badge variant="default">{poll.privacy}</Badge>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {!hasVoted ? (

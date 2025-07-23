@@ -1,44 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useEffect, useState } from "react";
-
-export function VoteList({ poll }: { poll: Poll }) {
-  return (
-    <ul className="space-y-4">
-      {poll.options.map((option, index) => {
-        // Calculate total votes for this poll
-        const totalVotes = poll.options.reduce((sum, opt) => sum + opt.vote, 0);
-        // Calculate percentage (avoid division by zero)
-        const percentage =
-          totalVotes === 0 ? 0 : (option.vote / totalVotes) * 100;
-
-        return (
-          <li key={index}>
-            <span className="flex justify-between">
-              <span>{option.text}</span>
-              <span className="text-blue-700">{option.vote}</span>
-            </span>
-
-            <Progress value={percentage} className="h-3" />
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-export type Poll = {
-  createdAt: Date;
-  deadline: Date;
-  id: string;
-  question: string;
-  options: {
-    text: string;
-    vote: number;
-  }[];
-};
+import { PollsList, type Poll } from "@/components/PollsList";
+import { toast } from "sonner";
 
 function PollsPage() {
   const [polls, setPolls] = useState<Poll[]>();
@@ -48,6 +10,31 @@ function PollsPage() {
       const response = await fetch("http://localhost:3005/polls");
       const data: Poll[] = await response.json();
 
+      setPolls(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const userId = localStorage.getItem("userId");
+
+  async function deletePoll(id: string) {
+    if (!userId) {
+      toast.error("not logged in");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3005/poll/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+        }),
+      });
+      const data = await response.json();
       setPolls(data);
     } catch (error) {
       console.log(error);
@@ -66,18 +53,7 @@ function PollsPage() {
 
   return (
     <div className="flex justify-center">
-      <div className="flex flex-col w-full items-center gap-4 pt-4">
-        {polls.map((poll) => (
-          <Card key={poll.id} className="w-1/3">
-            <CardHeader>
-              <CardTitle>{poll.question}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <VoteList poll={poll} />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <PollsList onDelete={deletePoll} polls={polls} />
     </div>
   );
 }
